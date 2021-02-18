@@ -117,11 +117,11 @@ const FoodDetails: React.FC = () => {
   }, [isFavorite, food]);
 
   const cartTotal = useMemo(() => {
-    let total = food.price * foodQuantity;
-    extras.forEach(extra => {
-      total += extra.value * extra.quantity;
-    });
-    return Math.round(total * 100) / 100;
+    const extraTotal = extras.reduce((acc, ex) => {
+      return acc + ex.value * ex.quantity;
+    }, 0);
+    const total = (food.price + extraTotal) * foodQuantity;
+    return formatValue(total);
   }, [extras, food, foodQuantity]);
 
   async function handleFinishOrder(): Promise<void> {
@@ -200,9 +200,7 @@ const FoodDetails: React.FC = () => {
         <TotalContainer>
           <Title>Total do pedido</Title>
           <PriceButtonContainer>
-            <TotalPrice testID="cart-total">
-              {formatValue(cartTotal)}
-            </TotalPrice>
+            <TotalPrice testID="cart-total">{cartTotal}</TotalPrice>
             <QuantityContainer>
               <Icon
                 size={15}
